@@ -3,6 +3,8 @@ require 'digest/sha1'
 
 class MainController < ApplicationController
 
+  API_KEY = 'b07a12df7d52e6c118e5d47d3f9e60135b109a1f'
+
   def get_offers
     uid = params[:uid]
     pub0 = params[:pub0]
@@ -11,11 +13,24 @@ class MainController < ApplicationController
     query_string = generate_query_string(uid, pub0, page)
 
     uri = URI("http://api.sponsorpay.com/feed/v1/offers.json?#{ query_string }&hashkey=#{ generate_hashkey(query_string) }")
-    response = JSON.parse(Net::HTTP.get_response(uri).body)
+    response = Net::HTTP.get_response(uri)
+    signature = response.header['X-Sponsorpay-Response-Signature']
 
-    # TODO verify response
-
-    @offers = response['offers']
+    @offers =
+      if generate_response_signature(response.body) == signature
+        []
+      else
+        if response.code == '200'
+          parsed_json = JSON.parse(response.body)
+          if parsed_json['code'] == 'NO_CONTENT'
+            []
+          else
+            []
+          end
+        else
+          []
+        end
+      end
   end
 
   private
@@ -36,9 +51,12 @@ class MainController < ApplicationController
   end
 
   def generate_hashkey query_string
-    api_key = 'b07a12df7d52e6c118e5d47d3f9e60135b109a1f'
-    query_string += '&' + api_key
+    query_string += '&' + API_KEY
     Digest::SHA1.hexdigest(query_string)
+  end
+
+  def generate_response_signature response_body
+    Digest::SHA1.hexdigest(response_body + API_KEY)
   end
 
 end
