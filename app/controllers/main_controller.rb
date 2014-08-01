@@ -13,8 +13,9 @@ class MainController < ApplicationController
     uri = URI("http://api.sponsorpay.com/feed/v1/offers.json?#{ query_string }&hashkey=#{ generate_hashkey(query_string) }")
     response = JSON.parse(Net::HTTP.get_response(uri).body)
 
-    puts Net::HTTP.get_response(uri).body
-    @offers = []
+    # TODO verify response
+
+    @offers = response['offers']
   end
 
   private
