@@ -35,3 +35,11 @@ gem 'jquery-rails'
 group :development do
   gem 'debugger'
 end
+
+group :test do
+  gem 'minitest'
+  gem 'shoulda'
+  gem 'shoulda-context'
+  gem 'mocha'
+  gem 'webmock'
+end
