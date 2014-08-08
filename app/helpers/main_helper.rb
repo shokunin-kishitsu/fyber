@@ -12,7 +12,11 @@ module MainHelper
   end
 
   def is_authentic? response
-    Digest::SHA1.hexdigest(response.body + API_KEY) == response.header['X-Sponsorpay-Response-Signature']
+    generate_signature(response.body) == response.header['X-Sponsorpay-Response-Signature']
+  end
+
+  def generate_signature response_body
+    Digest::SHA1.hexdigest(response_body + API_KEY)
   end
 
   def parse_offers offers

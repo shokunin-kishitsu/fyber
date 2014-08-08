@@ -7,9 +7,14 @@ class MainController < ApplicationController
     pub0 = params[:pub0]
     page = params[:page]
 
-    response = request_offers(uid, pub0, page)
-    parsed_json = JSON.parse(response.body)
     @offers = []
+    response = request_offers(uid, pub0, page)
+
+    begin
+      parsed_json = JSON.parse(response.body)
+    rescue
+      flash[:notice] = 'Can\'t parse JSON' and return
+    end
 
     bad_response = response.code != '200' || response.code == '200' && parsed_json['code'] == 'NO_CONTENT'
 

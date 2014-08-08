@@ -21,7 +21,7 @@ class MainHelperTest < ActionView::TestCase
   context 'request_offers' do
 
     should 'make a get request' do
-      stub_get_request('uid', 'pub0', '1')
+      stub_api_request
       request_offers('uid', 'pub0', '1')
     end
 

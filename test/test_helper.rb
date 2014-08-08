@@ -11,9 +11,8 @@ class ActiveSupport::TestCase
   # Note: You'll currently still have to declare fixtures explicitly in integration tests
   # -- they do not yet inherit this setting
 
-  # Add more helper methods to be used by all tests here...
-  def stub_get_request uid, pub0, page
-    query_string = generate_query_string(uid, pub0, 1)
-    stub_request(:get, generate_uri(query_string))
+  def stub_api_request status = 200, response_body = '', response_headers = {}
+    stub_request(:get, /api\.sponsorpay\.com\/feed\/v1\/offers\.json.*/).to_return(status: status, body: response_body, headers: response_headers)
   end
+
 end
